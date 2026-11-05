@@ -1,0 +1,2 @@
+// Builds core independently without resolving Minecraft or Stonecutter plugins.
+rootProject.name = 'unilib-core'

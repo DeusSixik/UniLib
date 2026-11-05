@@ -1,0 +1,54 @@
+plugins {
+    id 'dev.architectury.loom' version '1.10-SNAPSHOT' apply false
+    id 'architectury-plugin' version '3.4-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+}
+def profile = project
+architectury { minecraft = profile.minecraft_version }
+subprojects {
+    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'architectury-plugin'
+    apply plugin: 'maven-publish'
+    group = rootProject.maven_group
+    version = rootProject.mod_version
+    ext.minecraftProfile = profile
+    // Shared source directories need independent outputs for each Minecraft version.
+    layout.buildDirectory = rootProject.layout.buildDirectory.dir(
+        "stonecutter/${project.path.substring(1).replace(':', '/')}"
+    )
+    base.archivesName = "${rootProject.archives_name}-${project.name}-${profile.minecraft_version}"
+    repositories {
+        mavenCentral()
+        maven { url = 'https://maven.neoforged.net/releases/' }
+    }
+    dependencies {
+        minecraft "net.minecraft:minecraft:${profile.minecraft_version}"
+        mappings loom.officialMojangMappings()
+    }
+    java {
+        toolchain.languageVersion = JavaLanguageVersion.of(profile.java_version as int)
+        withSourcesJar()
+    }
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = profile.java_version as int
+    }
+    tasks.withType(net.fabricmc.loom.task.launch.GenerateRemapClasspathTask).configureEach {
+        remapClasspathFile.set(layout.buildDirectory.file('loom-cache/remapClasspath.txt'))
+    }
+    tasks.withType(net.fabricmc.loom.task.launch.GenerateLog4jConfigTask).configureEach {
+        outputFile.set(layout.buildDirectory.file('loom-cache/log4j.xml'))
+    }
+    tasks.withType(net.fabricmc.loom.task.launch.GenerateDLIConfigTask).configureEach {
+        dependsOn tasks.named('generateRemapClasspath')
+        remapClasspathFile.set(layout.buildDirectory.file('loom-cache/remapClasspath.txt'))
+    }
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = base.archivesName.get()
+                from components.java
+            }
+        }
+    }
+}

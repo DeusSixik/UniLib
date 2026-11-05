@@ -1,0 +1,43 @@
+def profile = minecraftProfile
+def loaderName = [fabric: 'Fabric', forge: 'Forge', neoforge: 'NeoForge'][project.name]
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+}
+configurations.named("development${loaderName}") { extendsFrom configurations.common }
+dependencies {
+    common(project(path: "${profile.path}:common", configuration: 'namedElements')) { transitive = false }
+    common(project(':core')) { transitive = false }
+    shadowBundle(project(':core')) { transitive = false }
+    shadowBundle(project(path: "${profile.path}:common", configuration: "transformProduction${loaderName}")) {
+        transitive = false
+    }
+}
+def metadata = [
+    version: project.version.toString(),
+    minecraft: profile.fabric_minecraft_dependency,
+    java: profile.java_version,
+    fabric_loader: profile.fabric_loader_version,
+    forge_loader_version_range: profile.forge_loader_version_range,
+    forge_version_range: profile.forge_version_range,
+    minecraft_version_range: profile.minecraft_version_range,
+    neoforge_loader_version_range: profile.findProperty('neoforge_loader_version_range') ?: '',
+    neoforge_version_range: profile.findProperty('neoforge_version_range') ?: ''
+]
+tasks.named('processResources') {
+    inputs.properties(metadata)
+    filesMatching(['fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml']) { expand(metadata) }
+}
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
+}
+remapJar { input.set shadowJar.archiveFile }

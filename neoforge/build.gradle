@@ -1,0 +1,7 @@
+plugins { id 'com.github.johnrengelman.shadow' }
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+dependencies { neoForge minecraftProfile.neoforge_dependency }
+apply from: rootProject.file('gradle/platform.gradle')

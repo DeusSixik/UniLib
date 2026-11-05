@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'com.cleanroommc.cleanroomgradle'
+    id 'maven-publish'
+}
+def libraryProperties = new Properties()
+file('../gradle.properties').withInputStream { libraryProperties.load(it) }
+group = libraryProperties.getProperty('maven_group')
+version = libraryProperties.getProperty('mod_version')
+base.archivesName = "${libraryProperties.getProperty('archives_name')}-cleanroom-1.12.2"
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.cleanroommc.com' }
+}
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    withSourcesJar()
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+dependencies {
+    implementation cleanroom.userdev('0.7.14-alpha')
+    api project(':core')
+}
+tasks.withType(JavaExec).configureEach {
+    systemProperty 'foundation.loadsall', 'true'
+}
+tasks.named('jar', Jar) {
+    dependsOn ':core:classes'
+    from(project(':core').sourceSets.main.output)
+    manifest.attributes 'Implementation-Version': project.version
+}
+tasks.named('processResources') {
+    inputs.property 'version', project.version
+    filesMatching('mcmod.info') { expand(version: project.version) }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = base.archivesName.get()
+            from components.java
+        }
+    }
+}

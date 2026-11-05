@@ -1,0 +1,10 @@
+[
+  {
+    "modid": "unilib",
+    "name": "UniLib",
+    "description": "Shared library for Minecraft mods (Cleanroom).",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+    "authorList": ["Sixik"]
+  }
+]

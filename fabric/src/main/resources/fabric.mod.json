@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "unilib",
+  "version": "${version}",
+  "name": "UniLib",
+  "description": "Shared library for Minecraft mods.",
+  "authors": ["Sixik"],
+  "environment": "*",
+  "entrypoints": { "main": ["dev.sixik.unilib.fabric.UniLibFabric"] },
+  "depends": {
+    "fabricloader": ">=${fabric_loader}",
+    "minecraft": "${minecraft}",
+    "java": ">=${java}"
+  }
+}

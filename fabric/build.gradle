@@ -1,0 +1,7 @@
+plugins { id 'com.github.johnrengelman.shadow' }
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+dependencies { modImplementation "net.fabricmc:fabric-loader:${minecraftProfile.fabric_loader_version}" }
+apply from: rootProject.file('gradle/platform.gradle')

@@ -1,0 +1,10 @@
+// Core is a real project dependency: Gradle builds it before compiling/packaging the mod.
+def libraryProperties = new Properties()
+file('../gradle.properties').withInputStream { libraryProperties.load(it) }
+ext.uniLibVersion = libraryProperties.getProperty('mod_version')
+dependencies { implementation project(':core') }
+
+tasks.named('jar', Jar) {
+    dependsOn ':core:classes'
+    from(project(':core').sourceSets.main.output)
+}

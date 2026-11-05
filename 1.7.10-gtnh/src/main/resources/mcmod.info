@@ -1,0 +1,10 @@
+[
+  {
+    "modid": "unilib",
+    "name": "UniLib",
+    "description": "Shared library for Minecraft mods (GTNH).",
+    "version": "${modVersion}",
+    "mcversion": "1.7.10",
+    "authorList": ["Sixik"]
+  }
+]

@@ -1,0 +1,34 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.kikugie.dev/releases' }
+        maven { url = 'https://maven.fabricmc.net/' }
+        maven { url = 'https://maven.architectury.dev/' }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.neoforged.net/releases/' }
+        gradlePluginPortal()
+    }
+}
+plugins {
+    id 'dev.kikugie.stonecutter' version '0.7.11'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+rootProject.name = 'unilib'
+stonecutter {
+    kotlinController = false
+    centralScript = 'build.gradle'
+    create(rootProject) {
+        versions '1.20.1', '1.21.1'
+        vcsVersion = '1.20.1'
+    }
+}
+include 'core'
+def platforms = [
+    '1.20.1': ['common', 'fabric', 'forge'],
+    '1.21.1': ['common', 'fabric', 'forge', 'neoforge']
+]
+platforms.each { minecraftVersion, modules ->
+    modules.each { moduleName ->
+        include ":${minecraftVersion}:${moduleName}"
+        project(":${minecraftVersion}:${moduleName}").projectDir = file(moduleName)
+    }
+}

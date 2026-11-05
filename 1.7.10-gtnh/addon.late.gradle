@@ -1,0 +1,2 @@
+// Override the convention's Git-derived version with the shared library version.
+version = ext.uniLibVersion

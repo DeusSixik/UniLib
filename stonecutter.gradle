@@ -1,0 +1,17 @@
+plugins { id 'dev.kikugie.stonecutter' }
+stonecutter.active '1.20.1'
+
+// Loom's IDE transformer agent is shared by all versioned projects.
+gradle.projectsEvaluated {
+    def syncTasks = allprojects.collectMany { it.tasks.matching { it.name == 'ideaSyncTask' }.toList() }
+    syncTasks.eachWithIndex { task, index ->
+        if (index > 0) task.mustRunAfter(syncTasks[index - 1])
+    }
+}
+tasks.register('buildModern') {
+    group = 'build'
+    description = 'Builds core and every configured modern Minecraft platform.'
+    dependsOn ':core:build'
+    dependsOn ':1.20.1:fabric:build', ':1.20.1:forge:build'
+    dependsOn ':1.21.1:fabric:build', ':1.21.1:forge:build', ':1.21.1:neoforge:build'
+}

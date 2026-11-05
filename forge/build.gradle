@@ -1,0 +1,7 @@
+plugins { id 'com.github.johnrengelman.shadow' }
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+dependencies { forge "net.minecraftforge:forge:${minecraftProfile.forge_version}" }
+apply from: rootProject.file('gradle/platform.gradle')

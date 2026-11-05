@@ -1,0 +1,24 @@
+modLoader = "javafml"
+loaderVersion = "${neoforge_loader_version_range}"
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "unilib"
+version = "${version}"
+displayName = "UniLib"
+authors = "Sixik"
+description = "Shared library for Minecraft mods."
+
+[[dependencies.unilib]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neoforge_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.unilib]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
